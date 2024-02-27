@@ -3,30 +3,27 @@
     # When updating past 23.11, use runtimeEnv in writeShellApplication
     nixpkgs.url = "github:nixos/nixpkgs/nixos-23.11";
     devenv.url = "github:cachix/devenv";
+    agenix.url = "github:ryantm/agenix";
+    disko.url = "github:nix-community/disko";
+    nixos-anywhere.url = "github:shlevy/nixos-anywhere/alpine";
+    nixos-anywhere.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = inputs@{ flake-parts, devenv, nixpkgs, self }:
+  outputs = inputs@{ flake-parts, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } ({ lib, ... }:
-      let nixos = self.nixosConfigurations.marlowe.config;
+      let
+        inherit (inputs) self nixpkgs devenv agenix disko nixos-anywhere;
+        nixos = self.nixosConfigurations.marlowe-vm.config;
       in {
         imports = [ devenv.flakeModule ];
         systems = [ "x86_64-linux" ];
-        flake.nixosConfigurations.marlowe = nixpkgs.lib.nixosSystem {
-          modules = lib.singleton ./configuration.nix;
+        flake.nixosConfigurations.marlowe-vm = nixpkgs.lib.nixosSystem {
+          modules = [ ./configuration.nix disko.nixosModules.disko ./vm.nix ];
         };
 
-        perSystem = { pkgs, config, ... }:
+        perSystem = { pkgs, config, system, ... }:
           let
             utilities = {
-              start-vm = pkgs.writeShellApplication {
-                name = "start-vm";
-                text = ''
-                  export QEMU_NET_OPTS="hostfwd=tcp::2221-:22"
-                  exec run-nixos-vm
-                '';
-                runtimeInputs = [ nixos.system.build.vm ];
-              };
-
               initialize-vm = let
                 alpine-image = pkgs.fetchurl {
                   url =
@@ -37,9 +34,22 @@
                 qemu-args = [
                   # Host kernel virtualization facilities
                   "-enable-kvm"
+                  # Enough RAM for nixos-anywhere
+                  "-m"
+                  "2G"
                   # Boot the Alpine cloud image
+                  ## We put it on SCSI so that it doesn't get allocated to /dev/vda, ensuring the persistent disks get the same name when initializing and in normal use.
+                  "-device"
+                  "virtio-scsi-pci,id=scsi"
                   "-drive"
-                  "file=${state-dir}/alpine.qcow2,format=qcow2,if=virtio"
+                  ''file="$tmpdir/alpine.qcow2",format=qcow2,if=none,id=alpine''
+                  "-device"
+                  "scsi-hd,drive=alpine"
+                  # Attach the persistent disks
+                  "-drive"
+                  "file=${state-dir}/disk1.qcow2,format=qcow2,if=virtio"
+                  "-drive"
+                  "file=${state-dir}/disk2.qcow2,format=qcow2,if=virtio"
                   # Pass in configuration to allow all users ssh access
                   "-cdrom"
                   cloud-init-config
@@ -48,8 +58,9 @@
                   "nic,netdev=user.0,model=virtio"
                   "-netdev"
                   "user,id=user.0,hostfwd=tcp::2221-:22"
-                  # Disable graphical console
-                  "-nographic"
+                  # Disable output
+                  "-display"
+                  "none"
                 ];
 
                 state-dir = config.devenv.shells.default.env.MARLOWE_VM_STATE;
@@ -79,15 +90,63 @@
                     echo "If you're sure you need to (re-)initialize, delete ${state-dir} and try again." >&2
                     exit 1
                   fi
+                  prjroot="$(dirname ${state-dir})"
+
+                  # Set up temp space
+                  tmpdir="$(mktemp -d)"
+                  trap 'rm -fR "$tmpdir"' EXIT
+
+                  # Create the VM disks
                   mkdir -p ${state-dir}
-                  install -m644 ${alpine-image} ${state-dir}/alpine.qcow2
-                  qemu-system-x86_64 ${lib.concatStringsSep " " qemu-args}
-                  rm ${state-dir}/alpine.qcow2
+                  qemu-img create -f qcow2 ${state-dir}/disk1.qcow2 -o nocow=on 512G
+                  qemu-img create -f qcow2 ${state-dir}/disk2.qcow2 -o nocow=on 512G
+
+                  # Start qemu running Alpine
+                  qemu-img create "$tmpdir/alpine.qcow2" -b ${alpine-image} -F qcow2 -f qcow2 1G
+                  qemu-system-x86_64 ${lib.concatStringsSep " " qemu-args} &
+
+                  # wait for connection
+                  until
+                    ssh alpine@localhost -p 2221 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=10 true
+                  do
+                    sleep 3
+                  done
+
+                  # reboot with kexec enabled
+                  ssh alpine@localhost -p 2221 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "doas sed -i 's|APPEND\(.*\)|APPEND\1 kexec_load_disabled=0|' /boot/extlinux.conf && doas reboot"
+
+                  # Make the SSH server key available to the VM
+                  mkdir -p "$tmpdir/extra/etc/ssh"
+                  (umask a=,u=rw; cd "$prjroot"; agenix -d id_ed25519.age > "$tmpdir/extra/etc/ssh/ssh_host_ed25519_key")
+
+                  # Initialize NixOS install
+                  nixos-anywhere --extra-files "$tmpdir/extra" --flake "$prjroot"#marlowe-vm alpine@localhost -p 2221 --post-kexec-ssh-port 2221
+
+                  # wait for connection
+                  until
+                    ssh alpine@localhost -p 2221 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=10 true
+                  do
+                    sleep 3
+                  done
+
+                  # Terminate the VM
+                  ssh alpine@localhost -p 2221 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "nohup sh -c 'sleep 2; doas poweroff'&"
+
+                  # Wait for qemu to finish
+                  wait
                 '';
-                runtimeInputs = [ pkgs.qemu_full ];
+                runtimeInputs = [
+                  pkgs.qemu_full
+                  pkgs.agenix
+                  nixos-anywhere.packages.${system}.default
+                ];
               };
             };
           in {
+            _module.args.pkgs = import nixpkgs {
+              inherit system;
+              overlays = [ agenix.overlays.default ];
+            };
             apps =
               lib.mapAttrs (name: prog: { program = "${prog}/bin/${name}"; });
             devenv.shells.default = { config, ... }: {
@@ -99,8 +158,7 @@
                 statix.enable = true;
               };
 
-              packages = with pkgs;
-                [ nixos-rebuild ]
+              packages = [ pkgs.nixos-rebuild pkgs.agenix pkgs.qemu_full ]
                 ++ lib.mapAttrsToList (_: prog: prog) utilities;
             };
           };

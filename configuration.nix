@@ -1,5 +1,5 @@
 {
-  imports = [ ./access.nix ./bootloader.nix ./vm.nix ];
+  imports = [ ./access.nix ./bootloader.nix ./disk.nix ];
 
   nixpkgs.localSystem.system = "x86_64-linux";
 

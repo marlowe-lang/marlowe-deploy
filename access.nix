@@ -40,6 +40,10 @@ in {
     # Enable SSH + mosh
     environment.systemPackages = with pkgs; [ mosh ];
     services.openssh.enable = true;
+    services.openssh.hostKeys = [{
+      path = "/etc/ssh/ssh_host_ed25519_key";
+      type = "ed25519";
+    }];
     networking.firewall.allowedTCPPorts = [ 22 ];
     networking.firewall.allowedUDPPortRanges = lib.singleton {
       from = 60001;
