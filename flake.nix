@@ -7,12 +7,14 @@
     disko.url = "github:nix-community/disko";
     nixos-anywhere.url = "github:shlevy/nixos-anywhere/alpine";
     nixos-anywhere.inputs.nixpkgs.follows = "nixpkgs";
+    nixos-images.url = "github:shlevy/nixos-images/doas";
   };
 
   outputs = inputs@{ flake-parts, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } ({ lib, ... }:
       let
-        inherit (inputs) self nixpkgs devenv agenix disko nixos-anywhere;
+        inherit (inputs)
+          self nixpkgs devenv agenix disko nixos-anywhere nixos-images;
         nixos = self.nixosConfigurations.marlowe-vm.config;
       in {
         imports = [ devenv.flakeModule ];
@@ -120,7 +122,7 @@
                   (umask a=,u=rw; cd "$prjroot"; agenix -d id_ed25519.age > "$tmpdir/extra/etc/ssh/ssh_host_ed25519_key")
 
                   # Initialize NixOS install
-                  nixos-anywhere --extra-files "$tmpdir/extra" --flake "$prjroot"#marlowe-vm alpine@localhost -p 2221 --post-kexec-ssh-port 2221
+                  nixos-anywhere --extra-files "$tmpdir/extra" --flake "$prjroot"#marlowe-vm alpine@localhost -p 2221 --post-kexec-ssh-port 2221 --kexec ${nixos-images.packages.x86_64-linux.kexec-installer-nixos-2311-noninteractive}/nixos-kexec-installer-noninteractive-x86_64-linux.tar.gz
 
                   # wait for connection
                   until
@@ -148,7 +150,8 @@
               overlays = [ agenix.overlays.default ];
             };
             apps =
-              lib.mapAttrs (name: prog: { program = "${prog}/bin/${name}"; });
+              lib.mapAttrs (name: prog: { program = "${prog}/bin/${name}"; })
+              utilities;
             devenv.shells.default = { config, ... }: {
               env.MARLOWE_VM_STATE = "${config.devenv.root}/state";
 
