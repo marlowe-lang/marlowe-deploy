@@ -5,9 +5,9 @@
     devenv.url = "github:cachix/devenv";
     agenix.url = "github:ryantm/agenix";
     disko.url = "github:nix-community/disko";
-    nixos-anywhere.url = "github:shlevy/nixos-anywhere/alpine";
+    nixos-anywhere.url = "github:nix-community/nixos-anywhere";
     nixos-anywhere.inputs.nixpkgs.follows = "nixpkgs";
-    nixos-images.url = "github:shlevy/nixos-images/doas";
+    nixos-images.url = "github:nix-community/nixos-images";
   };
 
   outputs = inputs@{ flake-parts, ... }:

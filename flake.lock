@@ -287,16 +287,15 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1709071732,
+        "lastModified": 1709147584,
         "narHash": "sha256-FABfVkbjQtb5a2bhPhQTJu6rMup02vwiskD5d/+MD90=",
-        "owner": "shlevy",
+        "owner": "nix-community",
         "repo": "nixos-anywhere",
-        "rev": "5e020ab77bf87ef3b145b3ae23885fe7d0f2bee0",
+        "rev": "31c945ed58a3accbf86b0cf82e5e49fa4db62407",
         "type": "github"
       },
       "original": {
-        "owner": "shlevy",
-        "ref": "alpine",
+        "owner": "nix-community",
         "repo": "nixos-anywhere",
         "type": "github"
       }
@@ -332,16 +331,15 @@
         "nixos-unstable": "nixos-unstable"
       },
       "locked": {
-        "lastModified": 1709120289,
+        "lastModified": 1709147512,
         "narHash": "sha256-0Fs+rGH3kJL7/PTzjjPL/EjuZTYUv+ZbFIK8U/sVKik=",
-        "owner": "shlevy",
+        "owner": "nix-community",
         "repo": "nixos-images",
-        "rev": "705cd07b97d59eb5c567696831b589900e467e43",
+        "rev": "c090b94b08b6d4d3189ca73d0e9e32b5425aebc8",
         "type": "github"
       },
       "original": {
-        "owner": "shlevy",
-        "ref": "doas",
+        "owner": "nix-community",
         "repo": "nixos-images",
         "type": "github"
       }
