@@ -8,20 +8,27 @@
     nixos-anywhere.url = "github:nix-community/nixos-anywhere";
     nixos-anywhere.inputs.nixpkgs.follows = "nixpkgs";
     nixos-images.url = "github:nix-community/nixos-images";
+    marlowe-playground.url = "github:shlevy/marlowe-playground/marlowe-deploy";
   };
 
   outputs = inputs@{ flake-parts, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } ({ lib, ... }:
       let
         inherit (inputs)
-          self nixpkgs devenv agenix disko nixos-anywhere nixos-images;
+          self nixpkgs devenv agenix disko nixos-anywhere nixos-images
+          marlowe-playground;
         nixos = self.nixosConfigurations.marlowe-vm.config;
+        base-modules = [
+          ./configuration.nix
+          agenix.nixosModules.default
+          disko.nixosModules.disko
+          marlowe-playground.nixosModules.default
+        ];
       in {
         imports = [ devenv.flakeModule ];
         systems = [ "x86_64-linux" ];
-        flake.nixosConfigurations.marlowe-vm = nixpkgs.lib.nixosSystem {
-          modules = [ ./configuration.nix disko.nixosModules.disko ./vm.nix ];
-        };
+        flake.nixosConfigurations.marlowe-vm =
+          nixpkgs.lib.nixosSystem { modules = base-modules ++ [ ./vm.nix ]; };
 
         perSystem = { pkgs, config, system, ... }:
           let
