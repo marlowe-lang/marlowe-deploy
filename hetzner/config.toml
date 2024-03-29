@@ -1,0 +1,11 @@
+[network]
+mac = "2c:f0:5d:0d:df:bc"
+ipv4 = "95.217.121.243"
+netmask4 = 26
+gateway4 = "95.217.121.193"
+ipv6 = "2a01:4f9:4a:370b::2"
+netmask6 = 64
+
+[disk]
+disk1 = "pci-0000:01:00.0-nvme-1"
+disk2 = "pci-0000:29:00.0-nvme-1"

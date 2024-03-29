@@ -11,4 +11,5 @@ in {
   "id_ed25519.age".publicKeys = admin-keys;
   "marlowe-playground/jwt.age".publicKeys = all-keys;
   "marlowe-playground/gh.age".publicKeys = all-keys;
+  "hetzner/auth-config.age".publicKeys = admin-keys;
 }

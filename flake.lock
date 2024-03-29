@@ -3118,6 +3118,23 @@
         "type": "github"
       }
     },
+    "nixpkgsHetznerHead": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1711726075,
+        "narHash": "sha256-BAXCgEMCCfpcL9z3yiHdatnKkx6BWk17CTYMTge+qX4=",
+        "owner": "shlevy",
+        "repo": "nixpkgs",
+        "rev": "605bd14107cdcdda2295ec50f861fd3d808a80b0",
+        "type": "github"
+      },
+      "original": {
+        "owner": "shlevy",
+        "ref": "hetznerHEAD",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "nixpkgs_10": {
       "locked": {
         "lastModified": 1689261696,
@@ -3584,7 +3601,8 @@
         "marlowe-playground": "marlowe-playground",
         "nixos-anywhere": "nixos-anywhere",
         "nixos-images": "nixos-images_2",
-        "nixpkgs": "nixpkgs_16"
+        "nixpkgs": "nixpkgs_16",
+        "nixpkgsHetznerHead": "nixpkgsHetznerHead"
       }
     },
     "secp256k1": {

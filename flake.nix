@@ -2,6 +2,10 @@
   inputs = {
     # When updating past 23.11, use runtimeEnv in writeShellApplication
     nixpkgs.url = "github:nixos/nixpkgs/nixos-23.11";
+    nixpkgsHetznerHead = {
+      url = "github:shlevy/nixpkgs/hetznerHEAD";
+      flake = false;
+    };
     devenv.url = "github:cachix/devenv";
     agenix.url = "github:ryantm/agenix";
     disko.url = "github:nix-community/disko";
@@ -16,8 +20,7 @@
       let
         inherit (inputs)
           self nixpkgs devenv agenix disko nixos-anywhere nixos-images
-          marlowe-playground;
-        nixos = self.nixosConfigurations.marlowe-vm.config;
+          marlowe-playground nixpkgsHetznerHead;
         base-modules = [
           ./configuration.nix
           agenix.nixosModules.default
@@ -29,10 +32,62 @@
         systems = [ "x86_64-linux" ];
         flake.nixosConfigurations.marlowe-vm =
           nixpkgs.lib.nixosSystem { modules = base-modules ++ [ ./vm.nix ]; };
+        flake.nixosConfigurations.marlowe-hetzner =
+          nixpkgs.lib.nixosSystem { modules = base-modules ++ [ ./hetzner ]; };
 
         perSystem = { pkgs, config, system, ... }:
           let
+            prjroot = dirOf config.devenv.shells.default.env.MARLOWE_VM_STATE;
+            initialize-common = pkgs.writeShellApplication {
+              name = "initialize-common";
+              text = ''
+                tmpdir="$1"
+                ssh_port="$2"
+                ssh_host="$3"
+                variant="$4"
+
+                # Make the SSH server key available to the VM
+                mkdir -p "$tmpdir/extra/etc/ssh"
+                (umask a=,u=rw; cd "${prjroot}"; agenix -d id_ed25519.age > "$tmpdir/extra/etc/ssh/ssh_host_ed25519_key")
+                # Initialize NixOS install
+                nixos-anywhere --extra-files "$tmpdir/extra" --flake "${prjroot}#marlowe-$variant" "$ssh_host" -p "$ssh_port" --post-kexec-ssh-port "$ssh_port" --kexec ${nixos-images.packages.x86_64-linux.kexec-installer-nixos-2311-noninteractive}/nixos-kexec-installer-noninteractive-x86_64-linux.tar.gz
+                rm -fR "$tmpdir/extra"
+              '';
+              runtimeInputs =
+                [ pkgs.agenix nixos-anywhere.packages.${system}.default ];
+            };
             utilities = {
+              initialize-hetzner = let
+                pythonWithHetzner =
+                  pkgs.python3.withPackages (p: [ p.hetznerHEAD ]);
+                hetznerAddr =
+                  (lib.importTOML ./hetzner/config.toml).network.ipv4;
+              in pkgs.writeShellApplication {
+                name = "initialize-hetzner";
+                text = ''
+                  # Set up temp space
+                  tmpdir="$(mktemp -d)"
+                  trap 'rm -fR "$tmpdir"' EXIT
+
+                  (umask a=,u=rw; cd "${prjroot}"; agenix -d hetzner/auth-config.age > "$tmpdir/auth-config")
+                  python ${prjroot}/hetzner/prepare-rescue.py \
+                    --auth-config "$tmpdir/auth-config" \
+                    --users ${prjroot}/users.toml \
+                    --server-addr ${hetznerAddr}
+                  rm "$tmpdir/auth-config"
+
+                  initialize-common "$tmpdir" 22 root@${hetznerAddr} hetzner
+
+                  # wait for connection
+                  until
+                    ssh root@${hetznerAddr} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=10 true
+                  do
+                    sleep 3
+                  done
+                '';
+                runtimeInputs =
+                  [ pythonWithHetzner pkgs.agenix initialize-common ];
+              };
               initialize-vm = let
                 alpine-image = pkgs.fetchurl {
                   url =
@@ -76,7 +131,7 @@
 
                 bootstrap-keys = lib.concatLists
                   (lib.mapAttrsToList (_: lib.getAttr "keys")
-                    nixos.marlowe.users);
+                    self.nixosConfigurations.marlowe-vm.config.marlowe.users);
 
                 meta-data = builtins.toFile "meta-data" (builtins.toJSON {
                   public-keys =
@@ -93,17 +148,11 @@
               in pkgs.writeShellApplication {
                 name = "initialize-vm";
                 text = ''
-                  if [ -d ${state-dir} ]
-                  then
-                    echo "${state-dir} already exists, I won't automatically clear it." >&2
-                    echo "If you're sure you need to (re-)initialize, delete ${state-dir} and try again." >&2
-                    exit 1
-                  fi
-                  prjroot="$(dirname ${state-dir})"
-
                   # Set up temp space
                   tmpdir="$(mktemp -d)"
                   trap 'rm -fR "$tmpdir"' EXIT
+
+                  rm -fR ${state-dir}
 
                   # Create the VM disks
                   mkdir -p ${state-dir}
@@ -124,12 +173,7 @@
                   # reboot with kexec enabled
                   ssh alpine@localhost -p 2221 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "doas sed -i 's|APPEND\(.*\)|APPEND\1 kexec_load_disabled=0|' /boot/extlinux.conf && doas reboot"
 
-                  # Make the SSH server key available to the VM
-                  mkdir -p "$tmpdir/extra/etc/ssh"
-                  (umask a=,u=rw; cd "$prjroot"; agenix -d id_ed25519.age > "$tmpdir/extra/etc/ssh/ssh_host_ed25519_key")
-
-                  # Initialize NixOS install
-                  nixos-anywhere --extra-files "$tmpdir/extra" --flake "$prjroot"#marlowe-vm alpine@localhost -p 2221 --post-kexec-ssh-port 2221 --kexec ${nixos-images.packages.x86_64-linux.kexec-installer-nixos-2311-noninteractive}/nixos-kexec-installer-noninteractive-x86_64-linux.tar.gz
+                  initialize-common "$tmpdir" 2221 alpine@localhost vm
 
                   # wait for connection
                   until
@@ -144,17 +188,25 @@
                   # Wait for qemu to finish
                   wait
                 '';
-                runtimeInputs = [
-                  pkgs.qemu_full
-                  pkgs.agenix
-                  nixos-anywhere.packages.${system}.default
-                ];
+                runtimeInputs = [ pkgs.qemu_full initialize-common ];
               };
             };
           in {
             _module.args.pkgs = import nixpkgs {
               inherit system;
-              overlays = [ agenix.overlays.default ];
+              overlays = [
+                agenix.overlays.default
+                (_self: super: {
+                  pythonPackagesExtensions = super.pythonPackagesExtensions ++ [
+                    (pself: _psuper: {
+                      hetznerHEAD = pself.callPackage (nixpkgsHetznerHead
+                        + "/pkgs/development/python-modules/hetzner") {
+                          head = true;
+                        };
+                    })
+                  ];
+                })
+              ];
             };
             apps =
               lib.mapAttrs (name: prog: { program = "${prog}/bin/${name}"; })
