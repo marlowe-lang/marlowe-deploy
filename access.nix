@@ -1,6 +1,6 @@
 { lib, config, pkgs, ... }:
 let
-  inherit (lib) types mkOption;
+  inherit (lib) types mkOption optionals;
   userType = types.submodule {
     options = {
       admin = mkOption {
@@ -18,6 +18,11 @@ let
       };
     };
   };
+
+  admin-keys = lib.concatMap (name:
+    let user = config.marlowe.users.${name};
+    in optionals user.admin user.keys)
+    (builtins.attrNames config.marlowe.users);
 in {
   options = {
     marlowe.users = lib.mkOption {
@@ -29,7 +34,10 @@ in {
   config = {
     marlowe.users = lib.importTOML ./users.toml;
 
-    users.users = lib.mapAttrs (_: user:
+    users.users = {
+      #FIXME should not be needed with --use-remote-sudo, but that's not working...
+      root.openssh.authorizedKeys.keys = admin-keys;
+    } // lib.mapAttrs (_: user:
       {
         isNormalUser = true;
         openssh.authorizedKeys.keys = user.keys;
