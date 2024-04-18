@@ -37,8 +37,11 @@
 
         perSystem = { pkgs, config, system, ... }:
           let
+            inherit (pkgs)
+              agenix python3 writeShellApplication fetchurl runCommand cdrkit
+              qemu_full;
             prjroot = dirOf config.devenv.shells.default.env.MARLOWE_VM_STATE;
-            initialize-common = pkgs.writeShellApplication {
+            initialize-common = writeShellApplication {
               name = "initialize-common";
               text = ''
                 tmpdir="$1"
@@ -54,15 +57,19 @@
                 rm -fR "$tmpdir/extra"
               '';
               runtimeInputs =
-                [ pkgs.agenix nixos-anywhere.packages.${system}.default ];
+                [ agenix nixos-anywhere.packages.${system}.default ];
             };
+            hetznerAddr = (lib.importTOML ./hetzner/config.toml).network.ipv4;
             utilities = {
+              redeploy-hetzner = writeShellApplication {
+                name = "redeploy-hetzner";
+                text = ''
+                  nixos-rebuild "''${1:-switch}" --flake "${prjroot}#marlowe-hetzner" --target-host root@${hetznerAddr} --use-substitutes
+                '';
+              };
               initialize-hetzner = let
-                pythonWithHetzner =
-                  pkgs.python3.withPackages (p: [ p.hetznerHEAD ]);
-                hetznerAddr =
-                  (lib.importTOML ./hetzner/config.toml).network.ipv4;
-              in pkgs.writeShellApplication {
+                pythonWithHetzner = python3.withPackages (p: [ p.hetznerHEAD ]);
+              in writeShellApplication {
                 name = "initialize-hetzner";
                 text = ''
                   # Set up temp space
@@ -85,11 +92,10 @@
                     sleep 3
                   done
                 '';
-                runtimeInputs =
-                  [ pythonWithHetzner pkgs.agenix initialize-common ];
+                runtimeInputs = [ pythonWithHetzner agenix initialize-common ];
               };
               initialize-vm = let
-                alpine-image = pkgs.fetchurl {
+                alpine-image = fetchurl {
                   url =
                     "https://dl-cdn.alpinelinux.org/alpine/v3.19/releases/cloud/nocloud_alpine-3.19.1-x86_64-bios-tiny-r0.qcow2";
                   hash = "sha256-YsnUOJtcnHpb9khOwaqyDPnpxihAbRDOoDpXtXtBbBI=";
@@ -138,14 +144,14 @@
                     map (openssh-key: { inherit openssh-key; }) bootstrap-keys;
                 });
 
-                cloud-init-config = pkgs.runCommand "cloud-init.iso" {
-                  nativeBuildInputs = [ pkgs.cdrkit ];
+                cloud-init-config = runCommand "cloud-init.iso" {
+                  nativeBuildInputs = [ cdrkit ];
                 } ''
                   cp ${meta-data} meta-data
                   genisoimage -output $out -volid cidata -joliet -rock meta-data
                 '';
 
-              in pkgs.writeShellApplication {
+              in writeShellApplication {
                 name = "initialize-vm";
                 text = ''
                   # Set up temp space
@@ -188,14 +194,14 @@
                   # Wait for qemu to finish
                   wait
                 '';
-                runtimeInputs = [ pkgs.qemu_full initialize-common ];
+                runtimeInputs = [ qemu_full initialize-common ];
               };
             };
           in {
             _module.args.pkgs = import nixpkgs {
               inherit system;
               overlays = [
-                agenix.overlays.default
+                inputs.agenix.overlays.default
                 (_self: super: {
                   pythonPackagesExtensions = super.pythonPackagesExtensions ++ [
                     (pself: _psuper: {
