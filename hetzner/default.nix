@@ -32,6 +32,9 @@ in {
       }];
     };
 
+    # https://docs.hetzner.com/dns-console/dns/general/recursive-name-servers
+    nameservers = [ "185.12.64.1" "185.12.64.2" ];
+
     defaultGateway = network.gateway4;
 
     defaultGateway6 = {

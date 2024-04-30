@@ -13,6 +13,7 @@
     nixos-anywhere.inputs.nixpkgs.follows = "nixpkgs";
     nixos-images.url = "github:nix-community/nixos-images";
     marlowe-playground.url = "github:shlevy/marlowe-playground/marlowe-deploy";
+    marlowe-cardano.url = "github:shlevy/marlowe-cardano/marlowe-deploy";
   };
 
   outputs = inputs@{ flake-parts, ... }:
@@ -20,12 +21,13 @@
       let
         inherit (inputs)
           self nixpkgs devenv agenix disko nixos-anywhere nixos-images
-          marlowe-playground nixpkgsHetznerHead;
+          marlowe-playground nixpkgsHetznerHead marlowe-cardano;
         base-modules = [
           ./configuration.nix
           agenix.nixosModules.default
           disko.nixosModules.disko
           marlowe-playground.nixosModules.default
+          marlowe-cardano.nixosModules.default
         ];
       in {
         imports = [ devenv.flakeModule ];

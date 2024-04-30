@@ -6,6 +6,7 @@
 
     ./http-services.nix
     ./marlowe-playground
+    ./marlowe-runtime.nix
   ];
 
   nixpkgs.localSystem.system = "x86_64-linux";
