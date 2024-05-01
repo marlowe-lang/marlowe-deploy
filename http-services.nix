@@ -103,7 +103,17 @@ in {
     in {
       services.nginx = {
         enable = any-hosts;
-        virtualHosts = mkMerge [ static-virtual-hosts proxied-virtual-hosts ];
+        virtualHosts = mkMerge [
+          static-virtual-hosts
+          proxied-virtual-hosts
+          {
+            default = {
+              locations."/".return = "404";
+              default = true;
+              rejectSSL = true;
+            };
+          }
+        ];
         recommendedOptimisation = true;
         recommendedProxySettings = true;
       };
