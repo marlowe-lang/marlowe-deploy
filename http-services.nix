@@ -48,6 +48,8 @@ let
     # TODO: If we have two static-sites at the same domain, this will silently clobber one (should error instead)
     name = static-cfg.domain;
     value = {
+      forceSSL = true;
+      enableACME = true;
       inherit (static-cfg) root;
       locations =
         mkIf static-cfg.index-fallback { "/".tryFiles = "$uri /index.html"; };
@@ -65,6 +67,8 @@ let
       value = {
         inherit (proxy-cfg) domain;
         vhost = {
+          forceSSL = true;
+          enableACME = true;
           locations.${proxy-cfg.prefix} = {
             proxyPass = "http://localhost:${toString port}";
           };
@@ -106,6 +110,12 @@ in {
       systemd.services = mapAttrs
         (_: def: mkMerge [ def.service { wantedBy = [ "nginx.service" ]; } ])
         proxy-defs;
-      networking.firewall.allowedTCPPorts = mkIf any-hosts [ 80 ];
+      networking.firewall.allowedTCPPorts = mkIf any-hosts [ 80 443 ];
+
+      security.acme = mkIf any-hosts {
+        acceptTerms = true;
+        # TODO change to proper admin
+        defaults.email = "shea.levy+acme@iohk.io";
+      };
     };
 }
