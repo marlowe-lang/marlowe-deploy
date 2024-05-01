@@ -14,6 +14,9 @@
     nixos-images.url = "github:nix-community/nixos-images";
     marlowe-playground.url = "github:shlevy/marlowe-playground/marlowe-deploy";
     marlowe-cardano.url = "github:shlevy/marlowe-cardano/marlowe-deploy";
+    marlowe-runner.url = "github:shlevy/marlowe-runner/marlowe-deploy";
+    marlowe-cardano_0_5_1.url =
+      "github:input-output-hk/marlowe-cardano?ref=marlowe-runtime-web@v0.0.5.1";
   };
 
   outputs = inputs@{ flake-parts, ... }:
@@ -21,21 +24,26 @@
       let
         inherit (inputs)
           self nixpkgs devenv agenix disko nixos-anywhere nixos-images
-          marlowe-playground nixpkgsHetznerHead marlowe-cardano;
+          marlowe-playground nixpkgsHetznerHead marlowe-cardano marlowe-runner;
         base-modules = [
           ./configuration.nix
           agenix.nixosModules.default
           disko.nixosModules.disko
           marlowe-playground.nixosModules.default
           marlowe-cardano.nixosModules.default
+          marlowe-runner.nixosModules.default
         ];
       in {
         imports = [ devenv.flakeModule ];
         systems = [ "x86_64-linux" ];
-        flake.nixosConfigurations.marlowe-vm =
-          nixpkgs.lib.nixosSystem { modules = base-modules ++ [ ./vm.nix ]; };
-        flake.nixosConfigurations.marlowe-hetzner =
-          nixpkgs.lib.nixosSystem { modules = base-modules ++ [ ./hetzner ]; };
+        flake.nixosConfigurations.marlowe-vm = nixpkgs.lib.nixosSystem {
+          modules = base-modules ++ [ ./vm.nix ];
+          specialArgs = { inherit inputs; };
+        };
+        flake.nixosConfigurations.marlowe-hetzner = nixpkgs.lib.nixosSystem {
+          modules = base-modules ++ [ ./hetzner ];
+          specialArgs = { inherit inputs; };
+        };
 
         perSystem = { pkgs, config, system, ... }:
           let
