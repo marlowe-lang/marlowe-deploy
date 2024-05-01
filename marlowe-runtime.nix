@@ -32,18 +32,32 @@ let
   };
 in {
   marlowe.runtimes = {
-    "runtime.tip.preprod.marlowe-lang.org".network = "preprod";
-    "runtime.tip.preview.marlowe-lang.org".network = "preview";
-    "runtime.tip.mainnet.marlowe-lang.org".network = "mainnet";
-    "runtime.051.preprod.marlowe-lang.org" = {
+    # Docs: We don't use domain-based addressing since state is keyed here.
+    preprod-tip = {
+      network = "preprod";
+      domain = "runtime.tip.preprod.marlowe.shealevy.com";
+    };
+    preview-tip = {
+      network = "preview";
+      domain = "runtime.tip.preview.marlowe.shealevy.com";
+    };
+    mainnet-tip = {
+      network = "mainnet";
+      domain = "runtime.tip.mainnet.marlowe.shealevy.com";
+    };
+
+    preprod-051 = {
+      domain = "runtime.051.preprod.marlowe.shealevy.com";
       network = "preprod";
       flake = flake_051;
     };
-    "runtime.051.preview.marlowe-lang.org" = {
+    preview-051 = {
+      domain = "runtime.051.preview.marlowe.shealevy.com";
       network = "preview";
       flake = flake_051;
     };
-    "runtime.051.mainnet.marlowe-lang.org" = {
+    mainnet-051 = {
+      domain = "runtime.051.mainnet.marlowe.shealevy.com";
       network = "mainnet";
       flake = flake_051;
     };
