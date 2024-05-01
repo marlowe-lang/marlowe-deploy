@@ -14695,11 +14695,11 @@
         "std": "std_3"
       },
       "locked": {
-        "lastModified": 1714572532,
-        "narHash": "sha256-Ru109nf5k2lOsrvWZH5TZqU5RvFdPLaU4diO654lSDw=",
+        "lastModified": 1714576856,
+        "narHash": "sha256-bwKHFnfHjt1+Ki0n0NnJcF7t1r3BmPC5I6lybe5plnw=",
         "owner": "shlevy",
         "repo": "marlowe-cardano",
-        "rev": "41a3c5f08cbe615bde1e7059846f2108c6c634db",
+        "rev": "a65b38499a1ba97f2791567cafb3eb8c52d25292",
         "type": "github"
       },
       "original": {
