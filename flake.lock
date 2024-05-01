@@ -14751,11 +14751,11 @@
         "std": "std_9"
       },
       "locked": {
-        "lastModified": 1714510257,
-        "narHash": "sha256-HgRveZp2PE3CEhQctucbKnXS7BNJB7jtWsbmh3Rv3Bg=",
+        "lastModified": 1714572107,
+        "narHash": "sha256-xNb10Amm1XfW7BlocC9gjhb6cy89q6NGOWinkP5ENWo=",
         "owner": "shlevy",
         "repo": "marlowe-playground",
-        "rev": "2d5fae70529755aae150bffbde56d1f57174987b",
+        "rev": "4874b5356f9aa5dcea7f1cb7ddad506969125ef3",
         "type": "github"
       },
       "original": {
