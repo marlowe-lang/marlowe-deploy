@@ -4,3 +4,17 @@ keys = [
   "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID/fJqgjwPG7b5SRPtCovFmtjmAksUSNg3xHWyqBM4Cs shlevy@shlevy-laptop",
 ]
 name = "Shea Levy"
+
+[nhenin]
+admin = true
+keys = [
+  "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGcq6fOwyTYTepO/b3foDc97HfWT4aILR1FhhDNaoz2Y mr.henin@gmail.com",
+]
+name = "Nicolas Henin"
+
+[paluh]
+admin = true
+keys = [
+  "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILd7mkXxI285N/pVRdbe/5WUTwj9iNnfUZ7BccEsE9ov"
+]
+name = "Tomasz Rybarczyk"
