@@ -3,6 +3,7 @@
     ./access.nix
     ./bootloader.nix
     ./disk.nix
+    ./dev.nix
 
     ./http-services.nix
     ./marlowe-playground
