@@ -1,7 +1,7 @@
 {
   marlowe.runners = {
-    "runner.preprod.marlowe.shealevy.com".runtime-instance = "preprod-051";
-    "runner.preview.marlowe.shealevy.com".runtime-instance = "preview-051";
-    "runner.mainnet.marlowe.shealevy.com".runtime-instance = "mainnet-051";
+    "preprod.runner.marlowe-lang.org".runtime-instance = "preprod-051";
+    "preview.runner.marlowe-lang.org".runtime-instance = "preview-051";
+    # "mainnet.runner.marlowe-lang.org".runtime-instance = "mainnet-051";
   };
 }

@@ -125,7 +125,7 @@ in {
       security.acme = mkIf any-hosts {
         acceptTerms = true;
         # TODO change to proper admin
-        defaults.email = "shea.levy+acme@iohk.io";
+        defaults.email = "t.rybarczyk@lambdaterms.com";
       };
     };
 }

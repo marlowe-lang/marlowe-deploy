@@ -1,5 +1,7 @@
 { inputs, lib, ... }:
 let
+  flake_100 = inputs.marlowe-cardano_1_0_0;
+  # The old flake in marlowe-cardano doesn't have Shea recent changes
   flake_051 = let self = inputs.marlowe-cardano_0_5_1;
   in self // {
     sqitch-plan-dirs = {
@@ -31,35 +33,52 @@ let
     };
   };
 in {
+  # Please upgrade per netowk instances in "one go".
+  # Let's say that we have a single `mainnet` runtime if we:
+  # - remove that instance
+  # - redeploy
+  # - add new mainnet instance
+  # - redeploy
+  # Then the cardano-node behind this network will be destroyed and recreated and resynced.
   marlowe.runtimes = {
-    # Docs: We don't use domain-based addressing since state is keyed here.
+    # Docs: We don't use domain-based addressing since state is keyed here meaning
+    # we don't want to recreate the service on its domain change.
     preprod-tip = {
       network = "preprod";
-      domain = "runtime.tip.preprod.marlowe.shealevy.com";
+      domain = "preprod.staging.runtime.marlowe-lang.org";
     };
     preview-tip = {
       network = "preview";
-      domain = "runtime.tip.preview.marlowe.shealevy.com";
+      domain = "preview.staging.runtime.marlowe-lang.org";
     };
-    mainnet-tip = {
-      network = "mainnet";
-      domain = "runtime.tip.mainnet.marlowe.shealevy.com";
-    };
-
+    # mainnet-tip = {
+    #   network = "mainnet";
+    #   domain = "mainnet.staging.runtime.marlowe-lang.org";
+    # };
     preprod-051 = {
-      domain = "runtime.051.preprod.marlowe.shealevy.com";
+      domain = "preprod.051.runtime.marlowe-lang.org";
       network = "preprod";
       flake = flake_051;
     };
     preview-051 = {
-      domain = "runtime.051.preview.marlowe.shealevy.com";
+      domain = "preview.051.runtime.marlowe-lang.org";
       network = "preview";
       flake = flake_051;
     };
     mainnet-051 = {
-      domain = "runtime.051.mainnet.marlowe.shealevy.com";
+      domain = "mainnet.051.runtime.marlowe-lang.org";
       network = "mainnet";
       flake = flake_051;
+    };
+    preprod-100 = {
+      domain = "preprod.100.runtime.marlowe-lang.org";
+      network = "preprod";
+      flake = flake_100;
+    };
+    preview-100 = {
+      domain = "preview.100.runtime.marlowe-lang.org";
+      network = "preview";
+      flake = flake_100;
     };
   };
 }
