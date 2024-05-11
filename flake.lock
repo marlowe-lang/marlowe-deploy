@@ -21800,11 +21800,11 @@
         "iogx": "iogx_21"
       },
       "locked": {
-        "lastModified": 1715349270,
-        "narHash": "sha256-c9Eda7v1idzHFGinO0dmwOeAuXbz9FqaGw4E2bYXjm0=",
+        "lastModified": 1715433341,
+        "narHash": "sha256-C9aEcoI30615NAR7kO2OkdASZw7pUnBJpHKSizFwnFA=",
         "owner": "input-output-hk",
         "repo": "marlowe-token-plans",
-        "rev": "6fa590c6a69bdcb7dbe83eb78b273b856c6cee9e",
+        "rev": "60e3d63802066fe8a439aee2527c269c5722bf30",
         "type": "github"
       },
       "original": {
