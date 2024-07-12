@@ -65,11 +65,11 @@ in {
       network = "preview";
       flake = flake_051;
     };
-    mainnet-051 = {
-      domain = "mainnet.051.runtime.marlowe-lang.org";
-      network = "mainnet";
-      flake = flake_051;
-    };
+    # mainnet-051 = {
+    #   domain = "mainnet.051.runtime.marlowe-lang.org";
+    #   network = "mainnet";
+    #   flake = flake_051;
+    # };
     preprod-100 = {
       domain = "preprod.100.runtime.marlowe-lang.org";
       network = "preprod";
