@@ -21,6 +21,7 @@
       "github:input-output-hk/marlowe-cardano?ref=marlowe-runtime-web@v0.0.5.1";
     marlowe-cardano_1_0_0.url =
       "github:input-output-hk/marlowe-cardano?ref=v1.0.0-deploy-v2";
+    cardano-node.url = "github:IntersectMBO/cardano-node?ref=9.0.0";
   };
 
   outputs = inputs@{ flake-parts, ... }:
