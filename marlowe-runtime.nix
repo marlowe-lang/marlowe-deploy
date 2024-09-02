@@ -33,13 +33,8 @@ let
     };
   };
 in {
-  # Please upgrade per netowk instances in "one go".
-  # Let's say that we have a single `mainnet` runtime if we:
-  # - remove that instance
-  # - redeploy
-  # - add new mainnet instance
-  # - redeploy
-  # Then the cardano-node behind this network will be destroyed and recreated and resynced.
+  # When you add/remove particular network cardano-node state will be preserved.
+  # Data should be removed manually if it's not needed anymore.
   marlowe.runtimes = {
     # Docs: We don't use domain-based addressing since state is keyed here meaning
     # we don't want to recreate the service on its domain change.
