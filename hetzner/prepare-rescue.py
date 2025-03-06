@@ -39,6 +39,9 @@ def gen_fingerprints():
 
 fingerprints = list(gen_fingerprints())
 
+print("Fetching server information")
+print(args.server_addr)
+print(robot.servers)
 server = robot.servers.get(args.server_addr)
 print("Rebooting in rescue mode")
 server.rescue.observed_activate(authorized_keys=fingerprints,tries=['hard'])

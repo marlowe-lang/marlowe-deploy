@@ -4,6 +4,12 @@ let
     mkOption types mapAttrs mkIf listToAttrs imap0 attrNames mkMerge mapAttrs';
 
   static-sites-options.options = {
+    useSSL = mkOption {
+      type = types.bool;
+      description = "Whether to use SSL for this site";
+      default = true;
+    };
+
     domain = mkOption {
       type = types.str;
       description = "The domain to host the site on";
@@ -48,8 +54,8 @@ let
     # TODO: If we have two static-sites at the same domain, this will silently clobber one (should error instead)
     name = static-cfg.domain;
     value = {
-      forceSSL = true;
-      enableACME = true;
+      forceSSL = static-cfg.useSSL;
+      enableACME = static-cfg.useSSL;
       inherit (static-cfg) root;
       locations =
         mkIf static-cfg.index-fallback { "/".tryFiles = "$uri /index.html"; };

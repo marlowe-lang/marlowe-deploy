@@ -43,13 +43,18 @@
       in {
         imports = [ devenv.flakeModule ];
         systems = [ "x86_64-linux" ];
-        flake.nixosConfigurations.marlowe-vm = nixpkgs.lib.nixosSystem {
-          modules = base-modules ++ [ ./vm.nix ];
-          specialArgs = { inherit inputs; };
-        };
-        flake.nixosConfigurations.marlowe-hetzner = nixpkgs.lib.nixosSystem {
-          modules = base-modules ++ [ ./hetzner ];
-          specialArgs = { inherit inputs; };
+        flake = {
+          nixosConfigurations = {
+            marlowe-vm = nixpkgs.lib.nixosSystem {
+              modules = base-modules ++ [ ./vm.nix ];
+              specialArgs = { inherit inputs; };
+            };
+            marlowe-hetzner = nixpkgs.lib.nixosSystem {
+              modules = base-modules ++ [ ./hetzner ];
+              specialArgs = { inherit inputs; };
+            };
+          };
+          nixosModules = ./configuration.nix;
         };
 
         perSystem = { pkgs, config, system, ... }:
