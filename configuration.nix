@@ -10,6 +10,7 @@
     ./marlowe-runtime.nix
     ./marlowe-runner.nix
     ./marlowe-token-plans.nix
+    ./marlowe-website.nix
     ./node.nix
   ];
 

@@ -22,6 +22,10 @@
     marlowe-cardano_1_0_0.url =
       "github:input-output-hk/marlowe-cardano?ref=v1.0.0-deploy-v2";
     cardano-node.url = "github:IntersectMBO/cardano-node?ref=9.0.0";
+    marlowe-website = {
+      url = "github:input-output-hk/marlowe-website";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs@{ flake-parts, ... }:
@@ -30,7 +34,7 @@
         inherit (inputs)
           self nixpkgs devenv agenix disko nixos-anywhere nixos-images
           marlowe-playground nixpkgsHetznerHead marlowe-cardano marlowe-runner
-          marlowe-token-plans;
+          marlowe-token-plans marlowe-website;
         base-modules = [
           ./configuration.nix
           agenix.nixosModules.default
@@ -39,6 +43,7 @@
           marlowe-cardano.nixosModules.default
           marlowe-runner.nixosModules.default
           marlowe-token-plans.nixosModules.default
+          marlowe-website.nixosModules.default
         ];
       in {
         imports = [ devenv.flakeModule ];
