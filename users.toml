@@ -18,3 +18,8 @@ keys = [
   "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILd7mkXxI285N/pVRdbe/5WUTwj9iNnfUZ7BccEsE9ov"
 ]
 name = "Tomasz Rybarczyk"
+
+[waalge]
+admin = true
+keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEUFuuPQa59hqzo6hkBXRyTSnDIfPPKcbYOagl3l4eWx waalge@jes" ]
+name = "Tomasz Rybarczyk"

@@ -33,6 +33,8 @@ let
     };
   };
 in {
+  # marlowe.cardano-node-flake = inputs.cardano-node.project."x86_64-linux";
+  marlowe.cardano-node-flake = inputs.cardano-node;
   # When you add/remove particular network cardano-node state will be preserved.
   # Data should be removed manually if it's not needed anymore.
   marlowe.runtimes = {
