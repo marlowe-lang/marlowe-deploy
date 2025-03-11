@@ -1,0 +1,22 @@
+format = "$username@$hostname 🗀  $directory $git_branch $character"
+
+[directory]
+format = '[$path]($style)[$read_only]($read_only_style)'
+
+[hostname]
+ssh_only = false
+style = "bold blue"
+format = "[$hostname]($style)"
+
+[character]
+success_symbol = '\$'
+error_symbol = '\$'
+
+[git_branch]
+disabled = false
+format = '[$symbol$branch(:$remote_branch)]($style)'
+
+[username]
+show_always = true
+format = '[$user]($style)'
+

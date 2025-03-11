@@ -6,6 +6,7 @@
     ./dev.nix
 
     ./http-services.nix
+    ./marlowe-docs-website.nix
     ./marlowe-playground
     ./marlowe-runtime.nix
     ./marlowe-runner.nix

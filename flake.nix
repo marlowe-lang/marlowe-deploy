@@ -17,13 +17,15 @@
     marlowe-runner.url = "github:input-output-hk/marlowe-runner";
     marlowe-token-plans.url =
       "github:input-output-hk/marlowe-token-plans?ref=nixos-module";
-    marlowe-cardano_0_5_1.url =
-      "github:input-output-hk/marlowe-cardano?ref=marlowe-runtime-web@v0.0.5.1";
     marlowe-cardano_1_0_0.url =
-      "github:input-output-hk/marlowe-cardano?ref=v1.0.0-deploy-v2";
-    cardano-node.url = "github:IntersectMBO/cardano-node?ref=9.0.0";
+      "github:input-output-hk/marlowe-cardano?ref=paluh/runtime@v1.0.1";
+    cardano-node.url = "github:IntersectMBO/cardano-node?ref=10.1.3";
     marlowe-website = {
-      url = "github:input-output-hk/marlowe-website";
+      url = "github:marlowe-lang/marlowe-website";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    marlowe-docs-website = {
+      url = "github:marlowe-lang/marlowe-doc";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -34,7 +36,7 @@
         inherit (inputs)
           self nixpkgs devenv agenix disko nixos-anywhere nixos-images
           marlowe-playground nixpkgsHetznerHead marlowe-cardano marlowe-runner
-          marlowe-token-plans marlowe-website;
+          marlowe-token-plans marlowe-website marlowe-docs-website;
         base-modules = [
           ./configuration.nix
           agenix.nixosModules.default
@@ -44,6 +46,7 @@
           marlowe-runner.nixosModules.default
           marlowe-token-plans.nixosModules.default
           marlowe-website.nixosModules.default
+          marlowe-docs-website.nixosModules.default
         ];
       in {
         imports = [ devenv.flakeModule ];
@@ -246,6 +249,13 @@
               utilities;
             devenv.shells.default = { config, ... }: {
               env.MARLOWE_VM_STATE = "${config.devenv.root}/state";
+              starship = {
+                enable = true;
+                config = {
+                  enable = true;
+                  path = ./starship.toml;
+                };
+              };
 
               pre-commit.hooks = {
                 nixfmt.enable = true;
