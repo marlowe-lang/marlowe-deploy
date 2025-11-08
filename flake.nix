@@ -13,6 +13,8 @@
     nixos-anywhere.inputs.nixpkgs.follows = "nixpkgs";
     nixos-images.url = "github:nix-community/nixos-images";
     konduit.url = "github:cardano-lightning/konduit#paluh/nix-deployment";
+    konduit-app.url =
+      "github:cardano-lightning/konduit-app#paluh/nix-deployment";
 
     # marlowe-playground.url = "github:shlevy/marlowe-playground/marlowe-deploy";
     # marlowe-cardano.url = "github:input-output-hk/marlowe-cardano";
@@ -37,7 +39,7 @@
       let
         inherit (inputs)
           self nixpkgs devenv agenix disko nixos-anywhere nixos-images
-          nixpkgsHetznerHead konduit;
+          nixpkgsHetznerHead konduit konduit-app;
         # marlowe-playground nixpkgsHetznerHead marlowe-cardano marlowe-runner
         # marlowe-token-plans marlowe-website marlowe-docs-website;
         base-modules = [
@@ -45,6 +47,7 @@
           agenix.nixosModules.default
           disko.nixosModules.disko
           konduit.nixosModules.default
+          konduit-app.nixosModules.default
           # marlowe-playground.nixosModules.default
           # marlowe-cardano.nixosModules.default
           # marlowe-runner.nixosModules.default

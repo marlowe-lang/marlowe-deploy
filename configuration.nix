@@ -6,6 +6,7 @@
     ./dev.nix
     ./http-services.nix
     ./konduit-adaptor.nix
+    ./konduit-app.nix
 
     # ./marlowe-docs-website.nix
     # ./marlowe-playground
