@@ -12,22 +12,22 @@
     nixos-anywhere.url = "github:nix-community/nixos-anywhere";
     nixos-anywhere.inputs.nixpkgs.follows = "nixpkgs";
     nixos-images.url = "github:nix-community/nixos-images";
-    marlowe-playground.url = "github:shlevy/marlowe-playground/marlowe-deploy";
-    marlowe-cardano.url = "github:input-output-hk/marlowe-cardano";
-    marlowe-runner.url = "github:input-output-hk/marlowe-runner";
-    marlowe-token-plans.url =
-      "github:input-output-hk/marlowe-token-plans?ref=nixos-module";
-    marlowe-cardano_1_0_0.url =
-      "github:input-output-hk/marlowe-cardano?ref=paluh/runtime@v1.0.1";
-    cardano-node.url = "github:IntersectMBO/cardano-node?ref=10.1.3";
-    marlowe-website = {
-      url = "github:marlowe-lang/marlowe-website";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    marlowe-docs-website = {
-      url = "github:marlowe-lang/marlowe-doc";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    # marlowe-playground.url = "github:shlevy/marlowe-playground/marlowe-deploy";
+    # marlowe-cardano.url = "github:input-output-hk/marlowe-cardano";
+    # marlowe-runner.url = "github:input-output-hk/marlowe-runner";
+    # marlowe-token-plans.url =
+    #  "github:input-output-hk/marlowe-token-plans?ref=nixos-module";
+    # marlowe-cardano_1_0_0.url =
+    #  "github:input-output-hk/marlowe-cardano?ref=paluh/runtime@v1.0.1";
+    # cardano-node.url = "github:IntersectMBO/cardano-node?ref=10.1.3";
+    #marlowe-website = {
+    #  url = "github:marlowe-lang/marlowe-website";
+    #  inputs.nixpkgs.follows = "nixpkgs";
+    #};
+    # marlowe-docs-website = {
+    #   url = "github:marlowe-lang/marlowe-doc";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
   };
 
   outputs = inputs@{ flake-parts, ... }:
@@ -35,18 +35,19 @@
       let
         inherit (inputs)
           self nixpkgs devenv agenix disko nixos-anywhere nixos-images
-          marlowe-playground nixpkgsHetznerHead marlowe-cardano marlowe-runner
-          marlowe-token-plans marlowe-website marlowe-docs-website;
+          nixpkgsHetznerHead;
+        # marlowe-playground nixpkgsHetznerHead marlowe-cardano marlowe-runner
+        # marlowe-token-plans marlowe-website marlowe-docs-website;
         base-modules = [
           ./configuration.nix
           agenix.nixosModules.default
           disko.nixosModules.disko
-          marlowe-playground.nixosModules.default
-          marlowe-cardano.nixosModules.default
-          marlowe-runner.nixosModules.default
-          marlowe-token-plans.nixosModules.default
-          marlowe-website.nixosModules.default
-          marlowe-docs-website.nixosModules.default
+          # marlowe-playground.nixosModules.default
+          # marlowe-cardano.nixosModules.default
+          # marlowe-runner.nixosModules.default
+          # marlowe-token-plans.nixosModules.default
+          # marlowe-website.nixosModules.default
+          # marlowe-docs-website.nixosModules.default
         ];
       in {
         imports = [ devenv.flakeModule ];
