@@ -12,6 +12,8 @@
     nixos-anywhere.url = "github:nix-community/nixos-anywhere";
     nixos-anywhere.inputs.nixpkgs.follows = "nixpkgs";
     nixos-images.url = "github:nix-community/nixos-images";
+    konduit.url = "github:cardano-lightning/konduit#paluh/nix-deployment";
+
     # marlowe-playground.url = "github:shlevy/marlowe-playground/marlowe-deploy";
     # marlowe-cardano.url = "github:input-output-hk/marlowe-cardano";
     # marlowe-runner.url = "github:input-output-hk/marlowe-runner";
@@ -42,6 +44,7 @@
           ./configuration.nix
           agenix.nixosModules.default
           disko.nixosModules.disko
+          konduit.nixosModules.default
           # marlowe-playground.nixosModules.default
           # marlowe-cardano.nixosModules.default
           # marlowe-runner.nixosModules.default

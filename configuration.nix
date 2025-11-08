@@ -5,6 +5,7 @@
     ./disk.nix
     ./dev.nix
     ./http-services.nix
+    ./konduit-adaptor.nix
 
     # ./marlowe-docs-website.nix
     # ./marlowe-playground
