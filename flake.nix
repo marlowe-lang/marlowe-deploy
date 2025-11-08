@@ -37,7 +37,7 @@
       let
         inherit (inputs)
           self nixpkgs devenv agenix disko nixos-anywhere nixos-images
-          nixpkgsHetznerHead;
+          nixpkgsHetznerHead konduit;
         # marlowe-playground nixpkgsHetznerHead marlowe-cardano marlowe-runner
         # marlowe-token-plans marlowe-website marlowe-docs-website;
         base-modules = [
