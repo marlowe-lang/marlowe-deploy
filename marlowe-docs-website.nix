@@ -1,6 +1,6 @@
 {
-  marlowe.docs-website."docs.marlowe-lang.org" = {
-    domain = "docs.marlowe-lang.org";
+  marlowe.docs-website."docs.konduit.channel" = {
+    domain = "docs.konduit.channel";
     useSSL = true;
   };
 }

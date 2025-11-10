@@ -41,38 +41,38 @@ in {
     # we don't want to recreate the service on its domain change.
     # preprod-tip = {
     #   network = "preprod";
-    #   domain = "preprod.staging.runtime.marlowe-lang.org";
+    #   domain = "preprod.staging.runtime.konduit.channel";
     # };
     # preview-tip = {
     #   network = "preview";
-    #   domain = "preview.staging.runtime.marlowe-lang.org";
+    #   domain = "preview.staging.runtime.konduit.channel";
     # };
     # mainnet-tip = {
     #   network = "mainnet";
-    #   domain = "mainnet.staging.runtime.marlowe-lang.org";
+    #   domain = "mainnet.staging.runtime.konduit.channel";
     # };
     # preprod-051 = {
-    #   domain = "preprod.051.runtime.marlowe-lang.org";
+    #   domain = "preprod.051.runtime.konduit.channel";
     #   network = "preprod";
     #   flake = flake_051;
     # };
     # preview-051 = {
-    #   domain = "preview.051.runtime.marlowe-lang.org";
+    #   domain = "preview.051.runtime.konduit.channel";
     #   network = "preview";
     #   flake = flake_051;
     # };
     # mainnet-051 = {
-    #   domain = "mainnet.051.runtime.marlowe-lang.org";
+    #   domain = "mainnet.051.runtime.konduit.channel";
     #   network = "mainnet";
     #   flake = flake_051;
     # };
     preprod-100 = {
-      domain = "preprod.100.runtime.marlowe-lang.org";
+      domain = "preprod.100.runtime.konduit.channel";
       network = "preprod";
       flake = flake_100;
     };
     preview-100 = {
-      domain = "preview.100.runtime.marlowe-lang.org";
+      domain = "preview.100.runtime.konduit.channel";
       network = "preview";
       flake = flake_100;
     };

@@ -12,11 +12,9 @@
     nixos-anywhere.url = "github:nix-community/nixos-anywhere";
     nixos-anywhere.inputs.nixpkgs.follows = "nixpkgs";
     nixos-images.url = "github:nix-community/nixos-images";
-    konduit.url = "github:cardano-lightning/konduit/paluh/nix-deployment";
-    konduit-app.url =
-      "github:cardano-lightning/konduit-app";
-    konduit-landing.url =
-      "github:cardano-lightning/konduit-landing";
+    konduit.url = "github:cardano-lightning/konduit";
+    konduit-app.url = "github:cardano-lightning/konduit-app";
+    konduit-landing.url = "github:cardano-lightning/konduit-landing";
 
     # marlowe-playground.url = "github:shlevy/marlowe-playground/marlowe-deploy";
     # marlowe-cardano.url = "github:input-output-hk/marlowe-cardano";
