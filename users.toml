@@ -4,3 +4,11 @@ keys = [
   "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILd7mkXxI285N/pVRdbe/5WUTwj9iNnfUZ7BccEsE9ov"
 ]
 name = "Tomasz Rybarczyk"
+
+
+[waalge]
+admin = true
+keys = [
+  "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH8M0WwpkjFbabVYEnrZp2Z1bThwiInd7xB3tfWZAHfv"
+]
+name = "Dominic"
