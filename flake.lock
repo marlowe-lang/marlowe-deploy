@@ -535,15 +535,16 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1762863690,
-        "narHash": "sha256-ivcmquwG7jUZY+pNkBKDFdA2qQu0WcGeukqq38LcKcY=",
+        "lastModified": 1763049090,
+        "narHash": "sha256-xJzhMWwM6ymdWG9tWDuqletkvKWD/8gDzdXV5LeShdA=",
         "owner": "cardano-lightning",
         "repo": "konduit",
-        "rev": "247519b4fe938e43ca3d5d5a43ffbdb1cca4111f",
+        "rev": "91899482744b131d1ad75bb2218ce6cd1dbf0982",
         "type": "github"
       },
       "original": {
         "owner": "cardano-lightning",
+        "ref": "fix-time-issue",
         "repo": "konduit",
         "type": "github"
       }
@@ -556,15 +557,16 @@
         "treefmt-nix": "treefmt-nix_2"
       },
       "locked": {
-        "lastModified": 1762789629,
-        "narHash": "sha256-cvN6aB78PlVLLo/HOERs/Tlc4yzwagLqSvAUxWdz3nc=",
+        "lastModified": 1763034676,
+        "narHash": "sha256-qGuAep5EHEN1MfzYBQylggteAehO1ScBhyi6ZYvwXSQ=",
         "owner": "cardano-lightning",
         "repo": "konduit-app",
-        "rev": "49d9224792f5e407ae15d69dde1660b01dffe14e",
+        "rev": "8fb766da21909b3eb45949d744d5fe6b9614c1bd",
         "type": "github"
       },
       "original": {
         "owner": "cardano-lightning",
+        "ref": "fix-channel-card",
         "repo": "konduit-app",
         "type": "github"
       }

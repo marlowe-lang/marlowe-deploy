@@ -12,8 +12,8 @@
     nixos-anywhere.url = "github:nix-community/nixos-anywhere";
     nixos-anywhere.inputs.nixpkgs.follows = "nixpkgs";
     nixos-images.url = "github:nix-community/nixos-images";
-    konduit.url = "github:cardano-lightning/konduit";
-    konduit-app.url = "github:cardano-lightning/konduit-app";
+    konduit.url = "github:cardano-lightning/konduit/fix-time-issue";
+    konduit-app.url = "github:cardano-lightning/konduit-app/fix-channel-card";
     konduit-landing.url = "github:cardano-lightning/konduit-landing";
 
     # marlowe-playground.url = "github:shlevy/marlowe-playground/marlowe-deploy";
@@ -272,7 +272,8 @@
                 statix.enable = true;
               };
 
-              packages = [ pkgs.nixos-rebuild pkgs.agenix pkgs.qemu_full ]
+              packages =
+                [ pkgs.nixos-rebuild pkgs.agenix pkgs.qemu_full pkgs.httpdump ]
                 ++ lib.mapAttrsToList (_: prog: prog) utilities;
             };
           };
